@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Xunit;
 
@@ -8,20 +9,23 @@ namespace MorseCodeLibraryTests
     public class MorseCodeLibraryTests
     {
         private MorseCode _morseCode;
-        private MorseCodeEncodingHelper _morseCodeEncodingHelper;
+
 
         public MorseCodeLibraryTests()
         {
             _morseCode = new MorseCode();
-            _morseCodeEncodingHelper = new MorseCodeEncodingHelper();
+            
         }
         
         
         [Theory]
-        [InlineData("···· · −·−−   ·−−− ··− −·· ·")] // HEY JUDE
-        public void MorseCode_CorrectlyReturnsScenario(string morseCode)
+        [InlineData("···· · −·−−   ·−−− ··− −·· ·","HEY JUDE")] // HEY JUDE
+        public void MorseCode_CorrectlyReturnsScenario(string mc,string decodedWord)
         {
-            _morseCode.Get(morseCode);
+            var morseCode = "···· · −·−−   ·−−− ··− −·· ·";
+
+            var word =  _morseCode.Get(morseCode);
+           Assert.Equal(decodedWord, word);
         }
 
 
@@ -39,6 +43,13 @@ namespace MorseCodeLibraryTests
         {
             private readonly string _wordSpace = "   ";
             private readonly string _letterSpace = " ";
+
+            private MorseCodeEncodingHelper _morseCodeEncodingHelper;
+
+            public MorseCode()
+            {
+                _morseCodeEncodingHelper = new MorseCodeEncodingHelper();
+            }
             public string Get(string input)
             {
                 if (IsServiceCode(input))
@@ -47,8 +58,22 @@ namespace MorseCodeLibraryTests
                 }
 
                 var words = input.Split(_wordSpace);
+                string morseCodeSentence = "";
+
+                foreach (var word in words)
+                {
+                    var letters = word.Split(_letterSpace);
+                    foreach (var letter in letters)
+                    {
+                        if (MorseCodeEncodingHelper.MorseDictionary.ContainsKey(letter))
+                        {
+                            morseCodeSentence += MorseCodeEncodingHelper.MorseDictionary[letter];
+                        }
+                    }
+
+                }
                 
-                return "";
+                return morseCodeSentence;
             }
 
             public bool IsServiceCode(string serviceCode)
@@ -66,67 +91,43 @@ namespace MorseCodeLibraryTests
 
             public static Dictionary<string, char> MorseDictionary = new Dictionary<string, char>()
             {
-                {".-",'A'},
-                {"-...",'B'},
-                {"-.-.",'C'},
-                {"-..",'D'},
-                {".",'E'},
-                {"..-.",'F'},
-                {"--.",'G'},
-                {"....",'H'},
-                {"..",'I'},
-                {".---",'J'},
-                {"-.-",'K'},
-                {".-..",'L'},
-                {"--",'M'},
-                {"-.",'N'},
-                {"---",'O'},
-                {".--.",'P'},
-                {"--.-",'Q'},
-                {".-.",'R'},
-                {"...",'S'},
-                {"-",'T'},
-                {"..-",'U'},
-                {"...-",'V'},
-                {".--",'W'},
-                {"-..-",'X'},
-                {"-.--",'Y'},
-                {"--..",'Z'},
-                {".----",'1'},
-                {"..---",'2'},
-                {"...--",'3'},
-                {"....-",'4'},
-                {".....",'5'},
-                {"-....",'6'},
-                {"--...",'7'},
-                {"---..",'8'},
-                {"----.",'9'},
+                {"·−",'A'},
+                {"−···",'B'},
+                {"−·−·",'C'},
+                {"−··",'D'},
+                {"·",'E'},
+                {"··−·",'F'},
+                {"−−·",'G'},
+                {"····",'H'},
+                {"··",'I'},
+                {"·−−−",'J'},
+                {"−·−",'K'},
+                {"·−··",'L'},
+                {"−−",'M'},
+                {"−·",'N'},
+                {"−−−",'O'},
+                {"·−−·",'P'},
+                {"−−·−",'Q'},
+                {"·−·",'R'},
+                {"···",'S'},
+                {"−",'T'},
+                {"··−",'U'},
+                {"···−",'V'},
+                {"·−−",'W'},
+                {"−··−",'X'},
+                {"−·−−",'Y'},
+                {"−−··",'Z'},
+                {"·−−−−",'1'},
+                {"··−−−",'2'},
+                {"···−−",'3'},
+                {"····−",'4'},
+                {"·····",'5'},
+                {"−····",'6'},
+                {"−−···",'7'},
+                {"−−−··",'8'},
+                {"−−−−·",'9'},
                 {"-----",'0'},
             };
-
-            private readonly Encoding _ascii = Encoding.ASCII;
-            private readonly Encoding _defaultEncoding = Encoding.Default;
-            public string FromAsciiEncoding(string input)
-            {
-                return EncodeTo(_ascii, _defaultEncoding, input);
-            }
-
-            public string ToAsciiEncoding(string input)
-            {
-                throw new NotImplementedException(); // EncodeBack
-            }
-
-            private string EncodeTo(Encoding currentEncoding,Encoding requiredEncoding,string input = "")
-            {
-                byte[] currentEncodingBytes = currentEncoding.GetBytes(input);
-
-                // Perform the conversion from one encoding to the other and write to the byteArray.
-                byte[] convertedBytes = Encoding.Convert(currentEncoding, requiredEncoding, currentEncodingBytes);
-                char[] convertedChars = new char[requiredEncoding.GetCharCount(convertedBytes, 0, convertedBytes.Length)];
-                requiredEncoding.GetChars(convertedBytes, 0, convertedBytes.Length, convertedChars, 0);
-
-                return new string(convertedChars);
-            }
         }
     }
 }
