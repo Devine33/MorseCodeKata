@@ -13,7 +13,6 @@ namespace MorseCodeLibraryTests
         public MorseCodeLibraryTests()
         {
             _morseCode = new MorseCode();
-            
         }
         
         
@@ -40,13 +39,6 @@ namespace MorseCodeLibraryTests
         {
             private readonly string _wordSpace = "   ";
             private readonly string _letterSpace = " ";
-
-            private MorseCodeEncodingHelper _morseCodeEncodingHelper;
-
-            public MorseCode()
-            {
-                _morseCodeEncodingHelper = new MorseCodeEncodingHelper();
-            }
             public string Get(string input)
             {
                 if (IsServiceCode(input))
