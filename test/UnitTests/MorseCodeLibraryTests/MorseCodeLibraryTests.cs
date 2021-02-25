@@ -8,8 +8,7 @@ namespace MorseCodeLibraryTests
 {
     public class MorseCodeLibraryTests
     {
-        private MorseCode _morseCode;
-
+        private readonly MorseCode _morseCode;
 
         public MorseCodeLibraryTests()
         {
@@ -20,11 +19,9 @@ namespace MorseCodeLibraryTests
         
         [Theory]
         [InlineData("···· · −·−−   ·−−− ··− −·· ·","HEY JUDE")] // HEY JUDE
-        public void MorseCode_CorrectlyReturnsScenario(string mc,string decodedWord)
+        public void MorseCode_CorrectlyReturnsScenario(string morseCode,string decodedWord)
         {
-            var morseCode = "···· · −·−−   ·−−− ··− −·· ·";
-
-            var word =  _morseCode.Get(morseCode);
+            var word = _morseCode.Get(morseCode);
            Assert.Equal(decodedWord, word);
         }
 
@@ -71,9 +68,10 @@ namespace MorseCodeLibraryTests
                         }
                     }
 
+                    morseCodeSentence += " ";
                 }
                 
-                return morseCodeSentence;
+                return morseCodeSentence.TrimEnd();
             }
 
             public bool IsServiceCode(string serviceCode)
