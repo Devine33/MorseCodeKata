@@ -18,9 +18,10 @@ namespace MorseCodeLibraryTests
         
         
         [Theory]
-        [InlineData("···· · −·−−   ·−−− ··− −·· ·")]
+        [InlineData("···· · −·−−   ·−−− ··− −·· ·")] // HEY JUDE
         public void MorseCode_CorrectlyReturnsScenario(string morseCode)
         {
+            _morseCode.Get(morseCode);
         }
 
 
@@ -28,22 +29,79 @@ namespace MorseCodeLibraryTests
         [InlineData("···−−−···")]
         public void MorseCode_CorrectlyReadsServiceCodes(string serviceCode)
         {
+            var sos=_morseCode.Get(serviceCode);
+
+            Assert.Equal("SOS",sos);
         }
 
 
         public class MorseCode
         {
-            private int _wordSpace = 3;
+            private readonly string _wordSpace = "   ";
+            private readonly string _letterSpace = " ";
             public string Get(string input)
             {
+                if (IsServiceCode(input))
+                {
+                    return MorseCodeEncodingHelper.SpecialServiceCodes[input];
+                }
+
+                var words = input.Split(_wordSpace);
+                
                 return "";
+            }
+
+            public bool IsServiceCode(string serviceCode)
+            {
+                return MorseCodeEncodingHelper.SpecialServiceCodes.ContainsKey(serviceCode);
             }
         }
 
         public class MorseCodeEncodingHelper
         {
-            public static Dictionary<char, string> MorseDictionary = new Dictionary<char, string>()
+            public static Dictionary<string, string> SpecialServiceCodes = new Dictionary<string, string>()
             {
+                {"···−−−···","SOS"},
+            };
+
+            public static Dictionary<string, char> MorseDictionary = new Dictionary<string, char>()
+            {
+                {".-",'A'},
+                {"-...",'B'},
+                {"-.-.",'C'},
+                {"-..",'D'},
+                {".",'E'},
+                {"..-.",'F'},
+                {"--.",'G'},
+                {"....",'H'},
+                {"..",'I'},
+                {".---",'J'},
+                {"-.-",'K'},
+                {".-..",'L'},
+                {"--",'M'},
+                {"-.",'N'},
+                {"---",'O'},
+                {".--.",'P'},
+                {"--.-",'Q'},
+                {".-.",'R'},
+                {"...",'S'},
+                {"-",'T'},
+                {"..-",'U'},
+                {"...-",'V'},
+                {".--",'W'},
+                {"-..-",'X'},
+                {"-.--",'Y'},
+                {"--..",'Z'},
+                {".----",'1'},
+                {"..---",'2'},
+                {"...--",'3'},
+                {"....-",'4'},
+                {".....",'5'},
+                {"-....",'6'},
+                {"--...",'7'},
+                {"---..",'8'},
+                {"----.",'9'},
+                {"-----",'0'},
             };
 
             private readonly Encoding _ascii = Encoding.ASCII;
